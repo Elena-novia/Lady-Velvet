@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/objects/floating_platform.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/suelo_flotante.png" id="2_texture"]
+
+[sub_resource type="RectangleShape2D" id="PlatformCollision"]
+size = Vector2(292, 12)
+
+[node name="FloatingPlatform" type="AnimatableBody2D"]
+sync_to_physics = true
+script = ExtResource("1_script")
+
+[node name="Visual" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_texture")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -86)
+shape = SubResource("PlatformCollision")

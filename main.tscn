@@ -6,13 +6,14 @@
 [ext_resource type="Texture2D" uid="uid://daq7vboxorbhq" path="res://assets/floor_2.png" id="4_floor"]
 [ext_resource type="PackedScene" path="res://scenes/objects/Portal.tscn" id="5_portal"]
 [ext_resource type="PackedScene" path="res://scenes/ui/EndScreen.tscn" id="6_end_screen"]
-[ext_resource type="Texture2D" path="res://assets/antes_del_fondo.png" id="7_antes_del_fondo"]
-
-[sub_resource type="RectangleShape2D" id="GroundShape"]
-size = Vector2(20000, 64)
+[ext_resource type="Texture2D" uid="uid://b03hhngut4ixx" path="res://assets/antes_del_fondo.png" id="7_antes_del_fondo"]
+[ext_resource type="PackedScene" path="res://scenes/objects/FloatingPlatform.tscn" id="8_floating_platform"]
 
 [sub_resource type="RectangleShape2D" id="PlayerShape"]
 size = Vector2(56, 128)
+
+[sub_resource type="RectangleShape2D" id="GroundShape"]
+size = Vector2(20000, 64)
 
 [node name="Main" type="Node2D" unique_id=1389211590]
 
@@ -29,29 +30,15 @@ z_index = -50
 scroll_scale = Vector2(0.35, 0.45)
 
 [node name="AntesDelFondoImage" type="Sprite2D" parent="AntesDelFondo" unique_id=1122087822]
-scale = Vector2(4, 4)
+position = Vector2(2420, -173)
+scale = Vector2(2.5044785, 2.5044777)
 texture = ExtResource("7_antes_del_fondo")
-
-[node name="Ground" type="StaticBody2D" parent="." unique_id=1537097448]
-position = Vector2(0, 352)
-
-[node name="Visual" type="Sprite2D" parent="Ground" unique_id=920721714]
-texture_repeat = 1
-position = Vector2(-10000, -32)
-scale = Vector2(0.5, 0.5)
-texture = ExtResource("4_floor")
-centered = false
-region_enabled = true
-region_rect = Rect2(0, 0, 40000, 3200)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground" unique_id=1106467170]
-shape = SubResource("GroundShape")
 
 [node name="StartPortal" parent="." unique_id=1753301051 instance=ExtResource("5_portal")]
 position = Vector2(0, 217.5)
 
 [node name="ExitPortal" parent="." unique_id=1753301052 instance=ExtResource("5_portal")]
-position = Vector2(3274, 218)
+position = Vector2(3967, -453)
 portal_type = 1
 
 [node name="PiedraEscalable" parent="." unique_id=1021048729 instance=ExtResource("2_piedra")]
@@ -60,6 +47,21 @@ scale = Vector2(0.35, 0.35)
 interaction_margin = 123.0
 top_non_climbable_margin = 180.0
 bottom_non_climbable_margin = 180.0
+
+[node name="PiedraEscalable2" parent="." unique_id=439993819 instance=ExtResource("2_piedra")]
+position = Vector2(1579, 395)
+scale = Vector2(0.47, 0.47)
+top_non_climbable_margin = 180.0
+bottom_non_climbable_margin = 180.0
+climb_speed = 194.0
+top_clearance = 133.0
+
+[node name="PiedraEscalable3" parent="." unique_id=33387037 instance=ExtResource("2_piedra")]
+position = Vector2(2613, 402.99997)
+scale = Vector2(0.35, 0.35)
+
+[node name="FloatingPlatform" parent="." instance=ExtResource("8_floating_platform")]
+position = Vector2(450, 265)
 
 [node name="Player" type="CharacterBody2D" parent="." unique_id=1659112505 groups=["player"]]
 position = Vector2(0, 256)
@@ -89,11 +91,19 @@ theme_override_constants/outline_size = 4
 text = "E - Climb"
 horizontal_alignment = 1
 
-[node name="PiedraEscalable2" parent="." unique_id=439993819 instance=ExtResource("2_piedra")]
-position = Vector2(1814, 671)
-top_non_climbable_margin = 180.0
-bottom_non_climbable_margin = 180.0
-climb_speed = 194.0
-top_clearance = 133.0
+[node name="Ground" type="StaticBody2D" parent="." unique_id=1537097448]
+position = Vector2(0, 352)
+
+[node name="Visual" type="Sprite2D" parent="Ground" unique_id=920721714]
+texture_repeat = 1
+position = Vector2(-10000, -32)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_floor")
+centered = false
+region_enabled = true
+region_rect = Rect2(0, 0, 40000, 3200)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground" unique_id=1106467170]
+shape = SubResource("GroundShape")
 
 [node name="EndScreen" parent="." unique_id=2012009436 instance=ExtResource("6_end_screen")]
