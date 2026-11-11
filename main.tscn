@@ -38,30 +38,27 @@ texture = ExtResource("7_antes_del_fondo")
 position = Vector2(0, 217.5)
 
 [node name="ExitPortal" parent="." unique_id=1753301052 instance=ExtResource("5_portal")]
-position = Vector2(3967, -453)
+position = Vector2(3917, -807)
 portal_type = 1
 
 [node name="PiedraEscalable" parent="." unique_id=1021048729 instance=ExtResource("2_piedra")]
-position = Vector2(853.00006, 457.99997)
+position = Vector2(876, 383)
 scale = Vector2(0.35, 0.35)
 interaction_margin = 123.0
 top_non_climbable_margin = 180.0
 bottom_non_climbable_margin = 180.0
 
 [node name="PiedraEscalable2" parent="." unique_id=439993819 instance=ExtResource("2_piedra")]
-position = Vector2(1579, 395)
+position = Vector2(2018, 393)
 scale = Vector2(0.47, 0.47)
 top_non_climbable_margin = 180.0
 bottom_non_climbable_margin = 180.0
 climb_speed = 194.0
 top_clearance = 133.0
 
-[node name="PiedraEscalable3" parent="." unique_id=33387037 instance=ExtResource("2_piedra")]
-position = Vector2(2613, 402.99997)
+[node name="FloatingPlatform" parent="." unique_id=1212416296 instance=ExtResource("8_floating_platform")]
+position = Vector2(2462, -247.99997)
 scale = Vector2(0.35, 0.35)
-
-[node name="FloatingPlatform" parent="." instance=ExtResource("8_floating_platform")]
-position = Vector2(450, 265)
 
 [node name="Player" type="CharacterBody2D" parent="." unique_id=1659112505 groups=["player"]]
 position = Vector2(0, 256)
@@ -107,3 +104,13 @@ region_rect = Rect2(0, 0, 40000, 3200)
 shape = SubResource("GroundShape")
 
 [node name="EndScreen" parent="." unique_id=2012009436 instance=ExtResource("6_end_screen")]
+
+[node name="PiedraEscalable4" parent="." unique_id=1889857875 instance=ExtResource("2_piedra")]
+position = Vector2(3804.9998, -69)
+scale = Vector2(0.57, 0.57)
+
+[node name="FloatingPlatform2" parent="." unique_id=527230746 instance=ExtResource("8_floating_platform")]
+position = Vector2(3098, -397.99997)
+scale = Vector2(0.35, 0.35)
+horizontal_travel_distance = 338.0
+auto_direction_from_position = true
