@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3]
 
-[ext_resource type="Texture2D" path="res://assets/piedra_1.png" id="1_stone"]
+[ext_resource type="Texture2D" path="res://assets/monton_de_basura.png" id="1_stone"]
 [ext_resource type="Script" path="res://scenes/objects/piedra_escalable.gd" id="2_script"]
 
 [node name="PiedraEscalable" type="Node2D"]

@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://daq7vboxorbhq" path="res://assets/floor_2.png" id="4_floor"]
 [ext_resource type="PackedScene" path="res://scenes/objects/Portal.tscn" id="5_portal"]
 [ext_resource type="PackedScene" path="res://scenes/ui/EndScreen.tscn" id="6_end_screen"]
+[ext_resource type="Texture2D" path="res://assets/antes_del_fondo.png" id="7_antes_del_fondo"]
 
 [sub_resource type="RectangleShape2D" id="GroundShape"]
 size = Vector2(20000, 64)
@@ -17,11 +18,19 @@ size = Vector2(56, 128)
 
 [node name="Background" type="Parallax2D" parent="." unique_id=1122087819]
 z_index = -100
-scroll_scale = Vector2(0.25, 0.35)
+scroll_scale = Vector2(0.15, 0.25)
 
 [node name="BackgroundImage" type="Sprite2D" parent="Background" unique_id=1122087820]
 scale = Vector2(4, 4)
 texture = ExtResource("3_background")
+
+[node name="AntesDelFondo" type="Parallax2D" parent="." unique_id=1122087821]
+z_index = -50
+scroll_scale = Vector2(0.35, 0.45)
+
+[node name="AntesDelFondoImage" type="Sprite2D" parent="AntesDelFondo" unique_id=1122087822]
+scale = Vector2(4, 4)
+texture = ExtResource("7_antes_del_fondo")
 
 [node name="Ground" type="StaticBody2D" parent="." unique_id=1537097448]
 position = Vector2(0, 352)
