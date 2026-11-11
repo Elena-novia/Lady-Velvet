@@ -1,0 +1,521 @@
+{
+  "description": "Standalone PNG RGBA animation pack for a new Godot 4.7 2D platformer project. No pre-existing game or controller assumed.",
+  "cell_size": [
+	256,
+	256
+  ],
+  "animations": {
+	"idle": {
+	  "file": "spritesheets/idle.png",
+	  "frames": 4,
+	  "fps": 8,
+	  "loop": true,
+	  "columns": 4,
+	  "rows": 1,
+	  "cell_size": [
+		256,
+		256
+	  ],
+	  "view_direction": "right",
+	  "frame_meta": [
+		{
+		  "frame": 0,
+		  "source_bbox": [
+			227,
+			12,
+			326,
+			187
+		  ],
+		  "source_bottom_y": 187,
+		  "cell_xy": [
+			72,
+			43
+		  ]
+		},
+		{
+		  "frame": 1,
+		  "source_bbox": [
+			457,
+			12,
+			554,
+			188
+		  ],
+		  "source_bottom_y": 188,
+		  "cell_xy": [
+			74,
+			43
+		  ]
+		},
+		{
+		  "frame": 2,
+		  "source_bbox": [
+			684,
+			12,
+			782,
+			188
+		  ],
+		  "source_bottom_y": 188,
+		  "cell_xy": [
+			73,
+			43
+		  ]
+		},
+		{
+		  "frame": 3,
+		  "source_bbox": [
+			912,
+			13,
+			1011,
+			187
+		  ],
+		  "source_bottom_y": 187,
+		  "cell_xy": [
+			72,
+			44
+		  ]
+		}
+	  ]
+	},
+	"walk": {
+	  "file": "spritesheets/walk.png",
+	  "frames": 8,
+	  "fps": 12,
+	  "loop": true,
+	  "columns": 8,
+	  "rows": 1,
+	  "cell_size": [
+		256,
+		256
+	  ],
+	  "view_direction": "right",
+	  "frame_meta": [
+		{
+		  "frame": 0,
+		  "source_bbox": [
+			206,
+			218,
+			305,
+			382
+		  ],
+		  "source_bottom_y": 382,
+		  "cell_xy": [
+			72,
+			55
+		  ]
+		},
+		{
+		  "frame": 1,
+		  "source_bbox": [
+			372,
+			217,
+			478,
+			383
+		  ],
+		  "source_bottom_y": 383,
+		  "cell_xy": [
+			68,
+			54
+		  ]
+		},
+		{
+		  "frame": 2,
+		  "source_bbox": [
+			541,
+			218,
+			650,
+			380
+		  ],
+		  "source_bottom_y": 380,
+		  "cell_xy": [
+			67,
+			56
+		  ]
+		},
+		{
+		  "frame": 3,
+		  "source_bbox": [
+			704,
+			215,
+			817,
+			382
+		  ],
+		  "source_bottom_y": 382,
+		  "cell_xy": [
+			64,
+			52
+		  ]
+		},
+		{
+		  "frame": 4,
+		  "source_bbox": [
+			880,
+			215,
+			980,
+			382
+		  ],
+		  "source_bottom_y": 382,
+		  "cell_xy": [
+			72,
+			52
+		  ]
+		},
+		{
+		  "frame": 5,
+		  "source_bbox": [
+			1052,
+			215,
+			1155,
+			382
+		  ],
+		  "source_bottom_y": 382,
+		  "cell_xy": [
+			70,
+			52
+		  ]
+		},
+		{
+		  "frame": 6,
+		  "source_bbox": [
+			1222,
+			215,
+			1331,
+			379
+		  ],
+		  "source_bottom_y": 379,
+		  "cell_xy": [
+			67,
+			52
+		  ]
+		},
+		{
+		  "frame": 7,
+		  "source_bbox": [
+			1396,
+			215,
+			1494,
+			376
+		  ],
+		  "source_bottom_y": 376,
+		  "cell_xy": [
+			73,
+			53
+		  ]
+		}
+	  ]
+	},
+	"jump": {
+	  "file": "spritesheets/jump.png",
+	  "frames": 5,
+	  "fps": 12,
+	  "loop": false,
+	  "columns": 5,
+	  "rows": 1,
+	  "cell_size": [
+		256,
+		256
+	  ],
+	  "view_direction": "right",
+	  "frame_meta": [
+		{
+		  "frame": 0,
+		  "source_bbox": [
+			252,
+			441,
+			375,
+			566
+		  ],
+		  "source_bottom_y": 566,
+		  "cell_xy": [
+			59,
+			100
+		  ]
+		},
+		{
+		  "frame": 1,
+		  "source_bbox": [
+			523,
+			419,
+			638,
+			560
+		  ],
+		  "source_bottom_y": 560,
+		  "cell_xy": [
+			64,
+			76
+		  ]
+		},
+		{
+		  "frame": 2,
+		  "source_bbox": [
+			783,
+			413,
+			890,
+			537
+		  ],
+		  "source_bottom_y": 537,
+		  "cell_xy": [
+			68,
+			69
+		  ]
+		},
+		{
+		  "frame": 3,
+		  "source_bbox": [
+			1049,
+			425,
+			1153,
+			561
+		  ],
+		  "source_bottom_y": 561,
+		  "cell_xy": [
+			70,
+			83
+		  ]
+		},
+		{
+		  "frame": 4,
+		  "source_bbox": [
+			1305,
+			433,
+			1421,
+			566
+		  ],
+		  "source_bottom_y": 566,
+		  "cell_xy": [
+			63,
+			91
+		  ]
+		}
+	  ]
+	},
+	"fall": {
+	  "file": "spritesheets/fall.png",
+	  "frames": 2,
+	  "fps": 8,
+	  "loop": true,
+	  "columns": 2,
+	  "rows": 1,
+	  "cell_size": [
+		256,
+		256
+	  ],
+	  "view_direction": "right",
+	  "frame_meta": [
+		{
+		  "frame": 0,
+		  "source_bbox": [
+			236,
+			604,
+			339,
+			748
+		  ],
+		  "source_bottom_y": 748,
+		  "cell_xy": [
+			70,
+			78
+		  ]
+		},
+		{
+		  "frame": 1,
+		  "source_bbox": [
+			470,
+			608,
+			565,
+			749
+		  ],
+		  "source_bottom_y": 749,
+		  "cell_xy": [
+			75,
+			82
+		  ]
+		}
+	  ]
+	},
+	"land": {
+	  "file": "spritesheets/land.png",
+	  "frames": 3,
+	  "fps": 12,
+	  "loop": false,
+	  "columns": 3,
+	  "rows": 1,
+	  "cell_size": [
+		256,
+		256
+	  ],
+	  "view_direction": "right",
+	  "frame_meta": [
+		{
+		  "frame": 0,
+		  "source_bbox": [
+			894,
+			603,
+			989,
+			740
+		  ],
+		  "source_bottom_y": 740,
+		  "cell_xy": [
+			75,
+			79
+		  ]
+		},
+		{
+		  "frame": 1,
+		  "source_bbox": [
+			1112,
+			619,
+			1221,
+			744
+		  ],
+		  "source_bottom_y": 744,
+		  "cell_xy": [
+			67,
+			96
+		  ]
+		},
+		{
+		  "frame": 2,
+		  "source_bbox": [
+			1352,
+			602,
+			1451,
+			748
+		  ],
+		  "source_bottom_y": 748,
+		  "cell_xy": [
+			72,
+			76
+		  ]
+		}
+	  ]
+	},
+	"climb": {
+	  "file": "spritesheets/climb.png",
+	  "frames": 8,
+	  "fps": 12,
+	  "loop": true,
+	  "columns": 8,
+	  "rows": 1,
+	  "cell_size": [
+		256,
+		256
+	  ],
+	  "view_direction": "right",
+	  "frame_meta": [
+		{
+		  "frame": 0,
+		  "source_bbox": [
+			207,
+			780,
+			310,
+			969
+		  ],
+		  "source_bottom_y": 969,
+		  "cell_xy": [
+			70,
+			14
+		  ]
+		},
+		{
+		  "frame": 1,
+		  "source_bbox": [
+			376,
+			780,
+			475,
+			973
+		  ],
+		  "source_bottom_y": 973,
+		  "cell_xy": [
+			72,
+			14
+		  ]
+		},
+		{
+		  "frame": 2,
+		  "source_bbox": [
+			546,
+			780,
+			647,
+			956
+		  ],
+		  "source_bottom_y": 956,
+		  "cell_xy": [
+			72,
+			14
+		  ]
+		},
+		{
+		  "frame": 3,
+		  "source_bbox": [
+			717,
+			780,
+			816,
+			989
+		  ],
+		  "source_bottom_y": 989,
+		  "cell_xy": [
+			72,
+			14
+		  ]
+		},
+		{
+		  "frame": 4,
+		  "source_bbox": [
+			882,
+			780,
+			978,
+			955
+		  ],
+		  "source_bottom_y": 955,
+		  "cell_xy": [
+			74,
+			14
+		  ]
+		},
+		{
+		  "frame": 5,
+		  "source_bbox": [
+			1050,
+			781,
+			1149,
+			939
+		  ],
+		  "source_bottom_y": 939,
+		  "cell_xy": [
+			72,
+			15
+		  ]
+		},
+		{
+		  "frame": 6,
+		  "source_bbox": [
+			1218,
+			780,
+			1323,
+			948
+		  ],
+		  "source_bottom_y": 948,
+		  "cell_xy": [
+			69,
+			14
+		  ]
+		},
+		{
+		  "frame": 7,
+		  "source_bbox": [
+			1387,
+			780,
+			1488,
+			951
+		  ],
+		  "source_bottom_y": 951,
+		  "cell_xy": [
+			72,
+			14
+		  ]
+		}
+	  ]
+	}
+  },
+  "project_context": "new_project_from_scratch",
+  "climb_note": "Climb frames include a vertical rope-like visual beside the character. Align the climbable level element with it or remove/replace it consistently; do not show duplicate ropes."
+}

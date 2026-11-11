@@ -1,0 +1,161 @@
+PROMPT — CREAR UN PROYECTO NUEVO E INTEGRAR EL PERSONAJE 2D (GODOT 4.7)
+
+CONTEXTO Y OBJETIVO
+Este es un PROYECTO NUEVO. No presupongas que existe STRATOS, ningún otro juego, escenas, scripts, controlador de personaje, grapple, sistema de movimiento o sistema de escalada. Debes crear la base jugable desde cero e integrar los recursos gráficos adjuntos.
+
+El objetivo es crear un prototipo 2D de plataformas sencillo y funcional que permita al personaje andar, saltar, caer, aterrizar y escalar cuerdas/escaleras o zonas escalables. No inventes una historia ni sistemas de juego que no se han pedido. Prioriza una base limpia, fácil de ampliar y sin dependencias externas.
+
+Utiliza Godot 4.7 y GDScript tipado cuando sea práctico.
+
+1. INSPECCIÓN Y CONFIGURACIÓN DEL PROYECTO
+- Comprueba la carpeta de trabajo y la versión de Godot.
+- Si no hay un proyecto Godot, crea uno desde cero con project.godot.
+- Si ya existe una estructura parcial del proyecto nuevo, inspecciónala y reutiliza lo que sea válido; no la confundas con otro proyecto ni la sobrescribas a ciegas.
+- Configura un juego 2D en orientación horizontal, con una resolución base inicial de 1280x720 y stretch adecuado para distintas ventanas. Mantén estos valores fáciles de cambiar.
+- Configura una escena principal funcional y asegúrate de que F6/F5 o ejecutar el proyecto abre una escena de prueba jugable.
+
+2. ESTRUCTURA PROPUESTA
+Organiza el proyecto de manera clara. Puedes ajustar nombres si Godot lo requiere, pero conserva una estructura equivalente a:
+
+res://
+  project.godot
+  scenes/
+	main.tscn
+	player/
+	  player.tscn
+	environment/
+	  climbable.tscn
+  scripts/
+	player.gd
+	climbable.gd
+  assets/
+	characters/
+	  player/
+		spritesheets/
+		frames/
+		previews/
+		animation_manifest.json
+
+Copia los recursos desde el paquete adjunto a `res://assets/characters/player/`. No dejes referencias a rutas externas ni a la carpeta temporal de descarga.
+
+3. RECURSOS GRÁFICOS Y ANIMACIONES
+Usa los recursos del paquete adjunto. Cada celda de los spritesheets mide 256x256 px y cada hoja contiene una única fila horizontal.
+
+Animaciones exactas:
+- idle: 4 frames, 8 FPS, loop.
+- walk: 8 frames, 12 FPS, loop.
+- jump: 5 frames, 12 FPS, no loop.
+- fall: 2 frames, 8 FPS, loop.
+- land: 3 frames, 12 FPS, no loop.
+- climb: 8 frames, 12 FPS, loop.
+
+Crea un recurso SpriteFrames y un AnimatedSprite2D. Puedes crear AtlasTexture por frame con regiones de 256x256, o cargar los PNG individuales. No uses `previews/` como texturas del juego.
+
+El personaje está dibujado mirando hacia la derecha. Utiliza `flip_h` para orientarlo hacia la izquierda. Mantén la misma escala visual en todas las animaciones.
+
+No uses la imagen de referencia completa como textura del personaje: contiene paneles y diagramación. Usa solo los PNG limpios de `spritesheets/` o `frames/`.
+
+4. ESCENA DEL JUGADOR
+Crea una escena reutilizable `Player` basada en CharacterBody2D con:
+- CollisionShape2D independiente del arte.
+- AnimatedSprite2D como hijo visual.
+- Un script de movimiento separado y legible.
+- Camera2D como hija o configurada en la escena principal, con límites/suavizado razonables si procede.
+
+Ajusta la colisión al cuerpo jugable, no a todo el espacio transparente del frame. El arte es alto y estrecho: inspecciona la silueta y ajusta una cápsula/rectángulo razonable alrededor del cuerpo. No cambies la colisión al cambiar de animación.
+
+El origen visual debe permanecer estable. Ajusta `AnimatedSprite2D.offset` para que los pies apoyen en el suelo y no salten entre frames. No muevas CharacterBody2D para corregir diferencias del dibujo. Inspecciona frames de todas las animaciones antes de elegir offset y escala definitivos.
+
+5. CONTROLES
+Configura las acciones en Project Settings > Input Map, creando estas acciones con las teclas indicadas:
+- move_left: A y flecha izquierda.
+- move_right: D y flecha derecha.
+- jump: Space y W/ flecha arriba como alternativa solo si no interfiere con escalar.
+- climb_up: W y flecha arriba.
+- climb_down: S y flecha abajo.
+- detach_climb: Space o movimiento horizontal para soltarse.
+
+Evita asignar una misma combinación de forma ambigua. En una zona escalable, W/arriba y S/abajo deben controlar la subida/bajada; Space debe poder saltar o soltarse según el estado.
+
+6. MOVIMIENTO BASE
+Implementa un controlador de plataformas básico y configurable:
+- Movimiento horizontal con aceleración y frenado.
+- Gravedad cuando el personaje no está en el suelo ni escalando.
+- Salto con velocidad configurable.
+- Detección del suelo mediante CharacterBody2D.
+- Salto con buffer y coyote time configurables, para que los controles sean tolerantes.
+- Orientación del personaje según la última dirección horizontal válida.
+
+Expón como variables editables en el Inspector al menos velocidad horizontal, aceleración/frenado, gravedad, velocidad de salto, velocidad de escalada, coyote time y jump buffer. Escoge valores iniciales razonables, pero no los hardcodees en múltiples sitios.
+
+Mantén toda la física en el controlador del jugador; la animación solo refleja el estado físico y nunca debe controlar ni alterar el movimiento.
+
+7. SISTEMA DE ESCALADA NUEVO
+Como el proyecto parte de cero, crea un sistema sencillo y reutilizable de zonas escalables, sin grapple.
+
+Crea `Climbable.tscn` como Area2D con CollisionShape2D vertical y colócala en un grupo llamado `climbable`. La zona puede representar una cuerda, escalera o superficie vertical escalable. Debe poder duplicarse y redimensionarse desde el editor.
+
+Comportamiento:
+- El jugador puede engancharse a una zona cuando está dentro de ella y pulsa W/arriba.
+- Mientras escala, W/arriba y S/abajo mueven al jugador verticalmente.
+- La gravedad queda suspendida mientras escala.
+- Mantén al jugador alineado de forma razonable con el eje de la zona escalable.
+- Al llegar al extremo superior/inferior, gestiona la salida sin teletransportes ni bloqueos.
+- Space o movimiento horizontal permiten soltarse de la zona.
+- Al salir, restaura la gravedad y el movimiento normal.
+- No permitas que se active la escalada cuando el jugador está demasiado lejos de una zona escalable.
+
+NOTA VISUAL IMPORTANTE: los frames `climb` ya incluyen una cuerda vertical dibujada junto al personaje. Alinea la zona escalable y su representación con esa cuerda incorporada. No dibujes otra cuerda encima en la misma posición. Si la cuerda incorporada no puede alinearse de forma consistente, documenta la limitación y prepara una solución visual coherente (por ejemplo, ocultar la cuerda de los frames y dibujar la cuerda del nivel una sola vez). No crees una mecánica de grapple.
+
+8. MÁQUINA DE ESTADOS DE ANIMACIÓN
+Centraliza la selección de animación en una función como `update_animation()`. No distribuyas llamadas `play()` por todo el código.
+
+Prioridad sugerida:
+1. climb: mientras el jugador esté escalando activamente.
+2. land: una vez al detectar el aterrizaje tras estar en el aire.
+3. jump: mientras asciende.
+4. fall: mientras desciende.
+5. walk: en el suelo con movimiento horizontal.
+6. idle: en el suelo sin movimiento horizontal.
+
+Reglas:
+- No reinicies una animación cada frame.
+- Reproduce `jump` al entrar en el estado, no continuamente.
+- Reproduce `land` una sola vez; al finalizar, cambia a idle o walk según corresponda.
+- `walk` e `idle` no pueden sobrescribir estados aéreos o de escalada.
+- `fall` debe repetirse mientras el jugador desciende.
+- `climb` debe repetirse mientras el jugador escala.
+- Actualiza `flip_h` según la dirección del jugador sin voltear el nodo físico ni su colisión.
+- Usa `animation_finished` o una comprobación equivalente para las animaciones no repetitivas.
+- Evita transiciones que hagan que el sprite parpadee o vuelva al primer frame continuamente.
+
+9. ESCENA DE PRUEBA
+Crea una escena principal simple para verificar todas las capacidades:
+- Suelo y varias plataformas de distintas alturas.
+- Al menos una zona escalable vertical con tamaño suficiente para probar subida y bajada.
+- Espacio libre para correr, saltar y aterrizar.
+- Player instanciado y una cámara que lo siga.
+
+Usa geometría provisional sencilla; no diseñes niveles completos ni añadas arte ambiental innecesario. La escena debe permitir al usuario probar manualmente andar, saltar, caer, aterrizar y escalar.
+
+10. CALIDAD Y VALIDACIÓN
+- Comprueba que el proyecto abre y la escena principal carga.
+- Comprueba que todas las texturas se importan y que cada animación tiene exactamente el número de frames indicado.
+- Ejecuta una comprobación headless o de parseo si está disponible.
+- Revisa que no haya errores ni warnings nuevos.
+- Comprueba que el cuerpo físico y la colisión no cambian al cambiar de animación.
+- Comprueba técnicamente las transiciones de estado y la detección de las zonas escalables.
+- No utilices bots, autopilotos ni simulaciones automáticas completas de gameplay. La prueba de jugabilidad final la realizará el usuario manualmente.
+
+11. ENTREGA
+Al terminar, informa de:
+- Estructura de archivos y escenas creadas.
+- Controles configurados.
+- Parámetros editables del movimiento.
+- Cómo se detectan y usan las zonas escalables.
+- Cómo se decide cada animación.
+- Escala y offset visual finales.
+- Resultado de las comprobaciones técnicas.
+- Cualquier frame que necesite retoque manual o limitación visual.
+
+No marques la tarea como completada si el proyecto no abre, la escena principal no arranca o alguna animación no está integrada. No presupongas que existe ningún código anterior: este proyecto se construye desde cero.

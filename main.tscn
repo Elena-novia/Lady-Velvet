@@ -1,0 +1,90 @@
+[gd_scene format=3 uid="uid://bdsykvbv1rl4s"]
+
+[ext_resource type="Script" uid="uid://crsh6q6iubho6" path="res://player.gd" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/objects/PiedraEscalable.tscn" id="2_piedra"]
+[ext_resource type="Texture2D" uid="uid://dpuvivqwas83a" path="res://assets/backgrund.png" id="3_background"]
+[ext_resource type="Texture2D" uid="uid://daq7vboxorbhq" path="res://assets/floor_2.png" id="4_floor"]
+[ext_resource type="PackedScene" path="res://scenes/objects/Portal.tscn" id="5_portal"]
+[ext_resource type="PackedScene" path="res://scenes/ui/EndScreen.tscn" id="6_end_screen"]
+
+[sub_resource type="RectangleShape2D" id="GroundShape"]
+size = Vector2(20000, 64)
+
+[sub_resource type="RectangleShape2D" id="PlayerShape"]
+size = Vector2(56, 128)
+
+[node name="Main" type="Node2D" unique_id=1389211590]
+
+[node name="Background" type="Parallax2D" parent="." unique_id=1122087819]
+z_index = -100
+scroll_scale = Vector2(0.25, 0.35)
+
+[node name="BackgroundImage" type="Sprite2D" parent="Background" unique_id=1122087820]
+scale = Vector2(4, 4)
+texture = ExtResource("3_background")
+
+[node name="Ground" type="StaticBody2D" parent="." unique_id=1537097448]
+position = Vector2(0, 352)
+
+[node name="Visual" type="Sprite2D" parent="Ground" unique_id=920721714]
+texture_repeat = 1
+position = Vector2(-10000, -32)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_floor")
+centered = false
+region_enabled = true
+region_rect = Rect2(0, 0, 40000, 3200)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground" unique_id=1106467170]
+shape = SubResource("GroundShape")
+
+[node name="StartPortal" parent="." unique_id=1753301051 instance=ExtResource("5_portal")]
+position = Vector2(0, 217.5)
+
+[node name="ExitPortal" parent="." unique_id=1753301052 instance=ExtResource("5_portal")]
+position = Vector2(3274, 218)
+portal_type = 1
+
+[node name="PiedraEscalable" parent="." unique_id=1021048729 instance=ExtResource("2_piedra")]
+position = Vector2(853.00006, 457.99997)
+scale = Vector2(0.35, 0.35)
+interaction_margin = 123.0
+top_non_climbable_margin = 180.0
+bottom_non_climbable_margin = 180.0
+
+[node name="Player" type="CharacterBody2D" parent="." unique_id=1659112505 groups=["player"]]
+position = Vector2(0, 256)
+script = ExtResource("1_player")
+
+[node name="Visual" type="AnimatedSprite2D" parent="Player" unique_id=1746233689]
+position = Vector2(0, -8)
+scale = Vector2(0.65, 0.65)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=378724155]
+shape = SubResource("PlayerShape")
+
+[node name="Camera2D" type="Camera2D" parent="Player" unique_id=404953326]
+position = Vector2(0, -80)
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+
+[node name="ClimbPrompt" type="Label" parent="Player" unique_id=1781773582]
+visible = false
+offset_left = -65.0
+offset_top = -126.0
+offset_right = 65.0
+offset_bottom = -96.0
+theme_override_colors/font_color = Color(1, 0.91, 0.65, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.1, 0.12, 1)
+theme_override_constants/outline_size = 4
+text = "E - Climb"
+horizontal_alignment = 1
+
+[node name="PiedraEscalable2" parent="." unique_id=439993819 instance=ExtResource("2_piedra")]
+position = Vector2(1814, 671)
+top_non_climbable_margin = 180.0
+bottom_non_climbable_margin = 180.0
+climb_speed = 194.0
+top_clearance = 133.0
+
+[node name="EndScreen" parent="." unique_id=2012009436 instance=ExtResource("6_end_screen")]

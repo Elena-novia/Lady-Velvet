@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/portal.png" id="1_portal"]
+[ext_resource type="Script" path="res://scripts/objects/portal.gd" id="2_script"]
+
+[sub_resource type="RectangleShape2D" id="PortalAreaShape"]
+resource_local_to_scene = true
+size = Vector2(90, 170)
+
+[node name="Portal" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("2_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_portal")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("PortalAreaShape")
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(0, 38.5)
