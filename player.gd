@@ -16,7 +16,7 @@ enum PlayerState { IDLE, WALK, JUMP, FALL, LAND, CLIMB, CLIMB_JUMP }
 @export var air_braking: float = 2200.0
 @export var max_air_horizontal_speed: float = 440.0
 @export_range(0.0, 2.0, 0.05) var climb_jump_air_control: float = 1.0
-@export_range(0.0, 10.0, 0.1) var respawn_delay: float = 0.5
+@export_range(0.0, 10.0, 0.1) var respawn_delay: float = 2.0
 @export_range(0.2, 2.0, 0.05) var death_effect_duration: float = 0.9
 @export_range(0.0, 1.0, 0.05) var death_tint_intensity: float = 0.85
 @export_range(0.0, 1.0, 0.05) var death_deformation_intensity: float = 0.75
@@ -44,12 +44,8 @@ var death_particles: CPUParticles2D
 var death_tween: Tween
 var _default_visual_scale: Vector2
 var _default_visual_modulate: Color
-var _default_visual_rotation: float
-var _default_visual_self_modulate: Color
-var _default_visual_material: Material
-var _default_visual_use_parent_material: bool
-var _live_sprite_frames: SpriteFrames
 var _death_cycle_id: int = 0
+var _scene_reload_started: bool = false
 
 @onready var character_sprite: AnimatedSprite2D = $Visual
 @onready var climb_prompt: Label = $ClimbPrompt
@@ -81,14 +77,9 @@ func _ready() -> void:
 			sprite_frames.add_frame(animation_name, load(frame_path))
 
 	character_sprite.sprite_frames = sprite_frames
-	_live_sprite_frames = sprite_frames
 	character_sprite.play("idle")
 	_default_visual_scale = character_sprite.scale
 	_default_visual_modulate = character_sprite.modulate
-	_default_visual_rotation = character_sprite.rotation
-	_default_visual_self_modulate = character_sprite.self_modulate
-	_default_visual_material = character_sprite.material
-	_default_visual_use_parent_material = character_sprite.use_parent_material
 	climb_prompt.visible = false
 	_create_death_particles()
 
@@ -218,7 +209,7 @@ func lock_controls() -> void:
 
 
 func die() -> bool:
-	if is_dead:
+	if is_dead or _scene_reload_started:
 		return false
 	_death_cycle_id += 1
 	var this_death_cycle := _death_cycle_id
@@ -239,72 +230,6 @@ func die() -> bool:
 	set_physics_process(false)
 	_run_death_and_respawn(death_started_usec, this_death_cycle)
 	return true
-
-
-func respawn_from_start_portal(
-	spawn_position: Vector2,
-	direction: Vector2,
-	step_distance: float,
-	step_count: int
-) -> void:
-	if not is_dead:
-		return
-	_reset_player_for_respawn()
-	set_physics_process(true)
-	begin_start_sequence(spawn_position, direction, step_distance, step_count)
-	if start_sequence_active:
-		character_sprite.stop()
-		character_sprite.animation = &"walk"
-		character_sprite.frame = 0
-		character_sprite.frame_progress = 0.0
-		character_sprite.play("walk")
-		current_state = PlayerState.WALK
-	character_sprite.visible = true
-
-
-func _reset_player_for_respawn() -> void:
-	_death_cycle_id += 1
-	if death_tween != null and death_tween.is_valid():
-		death_tween.kill()
-	death_tween = null
-	if is_instance_valid(death_particles):
-		death_particles.emitting = false
-		death_particles.visible = false
-		death_particles.free()
-	death_particles = null
-	_create_death_particles()
-	# Clear the death flag and state before selecting or showing a live animation.
-	is_dead = false
-	current_state = PlayerState.IDLE
-	velocity = Vector2.ZERO
-	has_been_airborne = false
-	can_climb = false
-	is_climbing = false
-	climb_jump_active = false
-	controls_enabled = false
-	start_sequence_active = false
-	start_sequence_consumed = false
-	start_sequence_remaining = 0.0
-	jump_hold_elapsed = 0.0
-	nearby_climbable_areas.clear()
-	active_climbable = null
-	active_climb_anchor = null
-	climb_prompt.visible = false
-	player_collision.set_deferred("disabled", false)
-	# Keep the sprite hidden until the start sequence has selected its walk animation.
-	character_sprite.visible = false
-	character_sprite.stop()
-	character_sprite.modulate = _default_visual_modulate
-	character_sprite.self_modulate = _default_visual_self_modulate
-	character_sprite.scale = _default_visual_scale
-	character_sprite.rotation = _default_visual_rotation
-	character_sprite.material = _default_visual_material
-	character_sprite.use_parent_material = _default_visual_use_parent_material
-	character_sprite.sprite_frames = _live_sprite_frames
-	character_sprite.speed_scale = 1.0
-	character_sprite.animation = &"idle"
-	character_sprite.frame = 0
-	character_sprite.play("idle")
 
 
 func _run_death_and_respawn(death_started_usec: int, death_cycle_id: int) -> void:
@@ -341,11 +266,20 @@ func _run_death_and_respawn(death_started_usec: int, death_cycle_id: int) -> voi
 	var remaining_delay := maxf(0.0, respawn_delay - elapsed_since_death)
 	if remaining_delay > 0.0:
 		await get_tree().create_timer(remaining_delay).timeout
-	if not is_inside_tree() or death_cycle_id != _death_cycle_id or not is_dead:
+	if (
+		not is_instance_valid(self)
+		or not is_inside_tree()
+		or death_cycle_id != _death_cycle_id
+		or not is_dead
+		or _scene_reload_started
+	):
 		return
-	var start_portal := get_tree().get_first_node_in_group("start_portal")
-	if start_portal != null and start_portal.has_method("respawn_player"):
-		start_portal.call("respawn_player", self)
+	var scene_tree := get_tree()
+	var current_scene := scene_tree.current_scene
+	if current_scene == null or not current_scene.is_ancestor_of(self):
+		return
+	_scene_reload_started = true
+	scene_tree.reload_current_scene()
 
 
 func _create_death_particles() -> void:
