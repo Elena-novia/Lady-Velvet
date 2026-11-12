@@ -21,7 +21,7 @@ func _sync_geometry() -> void:
 			Vector2(half_size.x, half_size.y),
 			Vector2(-half_size.x, half_size.y),
 		])
-		visual.color = Color(0.0, 0.0, 0.0, 1.0)
+		visual.color = Color("#161320")
 
 	var collision := get_node_or_null("CollisionShape2D") as CollisionShape2D
 	if collision != null:

@@ -1,39 +1,40 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://dx4edtb5i5ecx"]
 
-[ext_resource type="Texture2D" path="res://assets/monton_de_basura.png" id="1_stone"]
-[ext_resource type="Script" path="res://scenes/objects/piedra_escalable.gd" id="2_script"]
+[ext_resource type="Texture2D" uid="uid://bbmarjrxxjdhd" path="res://assets/muro.png" id="2_2113r"]
+[ext_resource type="Script" uid="uid://uha0xeua0b1k" path="res://scenes/objects/piedra_escalable.gd" id="2_script"]
 
-[node name="PiedraEscalable" type="Node2D"]
+[node name="PiedraEscalable" type="Node2D" unique_id=221245507]
 script = ExtResource("2_script")
 
-[node name="Visual" type="Sprite2D" parent="."]
+[node name="Visual" type="Sprite2D" parent="." unique_id=218095743]
 position = Vector2(0, -556.5)
-texture = ExtResource("1_stone")
+texture = ExtResource("2_2113r")
 
-[node name="Body" type="StaticBody2D" parent="."]
+[node name="Body" type="StaticBody2D" parent="." unique_id=961134093]
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Body"]
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Body" unique_id=1214986543]
 polygon = PackedVector2Array(-376.5, -1122, 376.5, -1122, 376.5, -47, 376.5, -5, 369.5, 0, -367.5, 0, -367.5, -5, -374.5, -327)
 
-[node name="InteractionAreaLeft" type="Area2D" parent="." groups=["climbable_areas"]]
+[node name="InteractionAreaLeft" type="Area2D" parent="." unique_id=1272970784 groups=["climbable_areas"]]
 position = Vector2(-352.5, -561)
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="InteractionAreaLeft"]
-polygon = PackedVector2Array(-16, -521, -139, -521, -131, 521, -8, 521)
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="InteractionAreaLeft" unique_id=513013565]
+polygon = PackedVector2Array(-15.833954, -495, -143.83395, -495, -136.32608, 495, -8.32608, 495)
 
-[node name="InteractionAreaRight" type="Area2D" parent="." groups=["climbable_areas"]]
+[node name="InteractionAreaRight" type="Area2D" parent="." unique_id=1755542842 groups=["climbable_areas"]]
 position = Vector2(352.5, -561)
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="InteractionAreaRight"]
-polygon = PackedVector2Array(8, -521, 131, -521, 131, 514, 7, 521)
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="InteractionAreaRight" unique_id=285822446]
+polygon = PackedVector2Array(16, -495, 144, -495, 144, 495, 16, 495)
 
-[node name="TopAnchor" type="Marker2D" parent="."]
-position = Vector2(0, -1488)
+[node name="TopAnchor" type="Marker2D" parent="." unique_id=737165127]
+position = Vector2(0, -1120)
 
-[node name="BottomAnchor" type="Marker2D" parent="."]
+[node name="BottomAnchor" type="Marker2D" parent="." unique_id=1887045847]
+position = Vector2(0, -2)
 
-[node name="LeftClimbAnchor" type="Marker2D" parent="."]
-position = Vector2(-463.5, 0)
+[node name="LeftClimbAnchor" type="Marker2D" parent="." unique_id=1159111219]
+position = Vector2(-407.5, 0)
 
-[node name="RightClimbAnchor" type="Marker2D" parent="."]
-position = Vector2(463.5, 0)
+[node name="RightClimbAnchor" type="Marker2D" parent="." unique_id=1554050035]
+position = Vector2(407.5, 0)

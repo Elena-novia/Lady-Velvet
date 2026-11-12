@@ -1,19 +1,18 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://cwjp00glr6tn5"]
 
-[ext_resource type="Script" path="res://scripts/objects/black_floor.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://cg8p20n2ayl84" path="res://scripts/objects/black_floor.gd" id="1_script"]
 
 [sub_resource type="RectangleShape2D" id="FloorShape"]
 resource_local_to_scene = true
 size = Vector2(800, 64)
 
-[node name="BlackFloor" type="StaticBody2D"]
-collision_layer = 1
-collision_mask = 1
+[node name="BlackFloor" type="StaticBody2D" unique_id=1874010630]
+modulate = Color(1, 1, 1, 1)
 script = ExtResource("1_script")
 
-[node name="Visual" type="Polygon2D" parent="."]
-color = Color(0, 0, 0, 1)
+[node name="Visual" type="Polygon2D" parent="." unique_id=897408921]
+color = Color(0.0862745, 0.0745098, 0.12549, 1)
 polygon = PackedVector2Array(-400, -32, 400, -32, 400, 32, -400, 32)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=263399581]
 shape = SubResource("FloorShape")
