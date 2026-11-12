@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/objects/black_floor.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="FloorShape"]
+resource_local_to_scene = true
+size = Vector2(800, 64)
+
+[node name="BlackFloor" type="StaticBody2D"]
+collision_layer = 1
+collision_mask = 1
+script = ExtResource("1_script")
+
+[node name="Visual" type="Polygon2D" parent="."]
+color = Color(0, 0, 0, 1)
+polygon = PackedVector2Array(-400, -32, 400, -32, 400, 32, -400, 32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("FloorShape")

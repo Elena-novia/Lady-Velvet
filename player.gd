@@ -16,12 +16,21 @@ enum PlayerState { IDLE, WALK, JUMP, FALL, LAND, CLIMB, CLIMB_JUMP }
 @export var air_braking: float = 2200.0
 @export var max_air_horizontal_speed: float = 440.0
 @export_range(0.0, 2.0, 0.05) var climb_jump_air_control: float = 1.0
+@export_range(0.0, 10.0, 0.1) var respawn_delay: float = 0.5
+@export_range(0.2, 2.0, 0.05) var death_effect_duration: float = 0.9
+@export_range(0.0, 1.0, 0.05) var death_tint_intensity: float = 0.85
+@export_range(0.0, 1.0, 0.05) var death_deformation_intensity: float = 0.75
+@export_range(0.2, 2.0, 0.05) var death_particle_duration: float = 0.8
+@export var death_particles_enabled: bool = true
+@export_range(4, 64, 1) var death_particle_amount: int = 28
+@export var death_flash_color: Color = Color(1.0, 0.42, 0.48, 1.0)
 
 var has_been_airborne: bool = false
 var can_climb: bool = false
 var is_climbing: bool = false
 var climb_jump_active: bool = false
 var controls_enabled: bool = true
+var is_dead: bool = false
 var start_sequence_active: bool = false
 var start_sequence_consumed: bool = false
 var start_sequence_direction: Vector2 = Vector2.RIGHT
@@ -31,9 +40,20 @@ var jump_hold_elapsed: float = 0.0
 var nearby_climbable_areas: Array[Area2D] = []
 var active_climbable: Node2D = null
 var active_climb_anchor: Marker2D = null
+var death_particles: CPUParticles2D
+var death_tween: Tween
+var _default_visual_scale: Vector2
+var _default_visual_modulate: Color
+var _default_visual_rotation: float
+var _default_visual_self_modulate: Color
+var _default_visual_material: Material
+var _default_visual_use_parent_material: bool
+var _live_sprite_frames: SpriteFrames
+var _death_cycle_id: int = 0
 
 @onready var character_sprite: AnimatedSprite2D = $Visual
 @onready var climb_prompt: Label = $ClimbPrompt
+@onready var player_collision: CollisionShape2D = $CollisionShape2D
 
 const ANIMATIONS := {
 	"idle": {"frames": 4, "fps": 8.0, "loop": true},
@@ -61,8 +81,16 @@ func _ready() -> void:
 			sprite_frames.add_frame(animation_name, load(frame_path))
 
 	character_sprite.sprite_frames = sprite_frames
+	_live_sprite_frames = sprite_frames
 	character_sprite.play("idle")
+	_default_visual_scale = character_sprite.scale
+	_default_visual_modulate = character_sprite.modulate
+	_default_visual_rotation = character_sprite.rotation
+	_default_visual_self_modulate = character_sprite.self_modulate
+	_default_visual_material = character_sprite.material
+	_default_visual_use_parent_material = character_sprite.use_parent_material
 	climb_prompt.visible = false
+	_create_death_particles()
 
 	for area_node in get_tree().get_nodes_in_group("climbable_areas"):
 		var area := area_node as Area2D
@@ -73,6 +101,8 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if is_dead:
+		return
 	if start_sequence_active:
 		_process_start_sequence(delta)
 		return
@@ -187,7 +217,166 @@ func lock_controls() -> void:
 	_update_climb_prompt()
 
 
+func die() -> bool:
+	if is_dead:
+		return false
+	_death_cycle_id += 1
+	var this_death_cycle := _death_cycle_id
+	var death_started_usec := Time.get_ticks_usec()
+	is_dead = true
+	controls_enabled = false
+	start_sequence_active = false
+	start_sequence_remaining = 0.0
+	velocity = Vector2.ZERO
+	is_climbing = false
+	climb_jump_active = false
+	active_climbable = null
+	active_climb_anchor = null
+	can_climb = false
+	nearby_climbable_areas.clear()
+	climb_prompt.visible = false
+	player_collision.set_deferred("disabled", true)
+	set_physics_process(false)
+	_run_death_and_respawn(death_started_usec, this_death_cycle)
+	return true
+
+
+func respawn_from_start_portal(
+	spawn_position: Vector2,
+	direction: Vector2,
+	step_distance: float,
+	step_count: int
+) -> void:
+	if not is_dead:
+		return
+	_reset_player_for_respawn()
+	set_physics_process(true)
+	begin_start_sequence(spawn_position, direction, step_distance, step_count)
+	if start_sequence_active:
+		character_sprite.stop()
+		character_sprite.animation = &"walk"
+		character_sprite.frame = 0
+		character_sprite.frame_progress = 0.0
+		character_sprite.play("walk")
+		current_state = PlayerState.WALK
+	character_sprite.visible = true
+
+
+func _reset_player_for_respawn() -> void:
+	_death_cycle_id += 1
+	if death_tween != null and death_tween.is_valid():
+		death_tween.kill()
+	death_tween = null
+	if is_instance_valid(death_particles):
+		death_particles.emitting = false
+		death_particles.visible = false
+		death_particles.free()
+	death_particles = null
+	_create_death_particles()
+	# Clear the death flag and state before selecting or showing a live animation.
+	is_dead = false
+	current_state = PlayerState.IDLE
+	velocity = Vector2.ZERO
+	has_been_airborne = false
+	can_climb = false
+	is_climbing = false
+	climb_jump_active = false
+	controls_enabled = false
+	start_sequence_active = false
+	start_sequence_consumed = false
+	start_sequence_remaining = 0.0
+	jump_hold_elapsed = 0.0
+	nearby_climbable_areas.clear()
+	active_climbable = null
+	active_climb_anchor = null
+	climb_prompt.visible = false
+	player_collision.set_deferred("disabled", false)
+	# Keep the sprite hidden until the start sequence has selected its walk animation.
+	character_sprite.visible = false
+	character_sprite.stop()
+	character_sprite.modulate = _default_visual_modulate
+	character_sprite.self_modulate = _default_visual_self_modulate
+	character_sprite.scale = _default_visual_scale
+	character_sprite.rotation = _default_visual_rotation
+	character_sprite.material = _default_visual_material
+	character_sprite.use_parent_material = _default_visual_use_parent_material
+	character_sprite.sprite_frames = _live_sprite_frames
+	character_sprite.speed_scale = 1.0
+	character_sprite.animation = &"idle"
+	character_sprite.frame = 0
+	character_sprite.play("idle")
+
+
+func _run_death_and_respawn(death_started_usec: int, death_cycle_id: int) -> void:
+	if death_tween != null and death_tween.is_running():
+		death_tween.kill()
+	if death_particles_enabled:
+		death_particles.amount = death_particle_amount
+		death_particles.lifetime = death_particle_duration
+		death_particles.restart()
+		death_particles.emitting = true
+
+	var duration := maxf(0.2, death_effect_duration)
+	var tint := _default_visual_modulate.lerp(death_flash_color, death_tint_intensity)
+	var squash := Vector2(
+		_default_visual_scale.x * (1.0 + death_deformation_intensity * 0.55),
+		_default_visual_scale.y * (1.0 - death_deformation_intensity * 0.6)
+	)
+	var collapsed := Vector2(
+		_default_visual_scale.x * 0.04,
+		_default_visual_scale.y * 0.08
+	)
+	var transparent_tint := tint
+	transparent_tint.a = 0.0
+	death_tween = create_tween()
+	death_tween.tween_property(character_sprite, "modulate", tint, duration * 0.22)
+	death_tween.parallel().tween_property(character_sprite, "scale", squash, duration * 0.22)
+	death_tween.tween_property(character_sprite, "modulate", transparent_tint, duration * 0.78)
+	death_tween.parallel().tween_property(character_sprite, "scale", collapsed, duration * 0.78)
+	await death_tween.finished
+	if death_cycle_id != _death_cycle_id or not is_dead:
+		return
+	character_sprite.visible = false
+	var elapsed_since_death := float(Time.get_ticks_usec() - death_started_usec) / 1000000.0
+	var remaining_delay := maxf(0.0, respawn_delay - elapsed_since_death)
+	if remaining_delay > 0.0:
+		await get_tree().create_timer(remaining_delay).timeout
+	if not is_inside_tree() or death_cycle_id != _death_cycle_id or not is_dead:
+		return
+	var start_portal := get_tree().get_first_node_in_group("start_portal")
+	if start_portal != null and start_portal.has_method("respawn_player"):
+		start_portal.call("respawn_player", self)
+
+
+func _create_death_particles() -> void:
+	death_particles = CPUParticles2D.new()
+	death_particles.name = "DeathParticles"
+	death_particles.position = character_sprite.position
+	death_particles.amount = death_particle_amount
+	death_particles.lifetime = death_particle_duration
+	death_particles.one_shot = true
+	death_particles.explosiveness = 0.9
+	death_particles.direction = Vector2.UP
+	death_particles.spread = 180.0
+	death_particles.gravity = Vector2(0.0, 120.0)
+	death_particles.initial_velocity_min = 80.0
+	death_particles.initial_velocity_max = 190.0
+	death_particles.scale_amount_min = 1.5
+	death_particles.scale_amount_max = 3.5
+	death_particles.color = death_flash_color
+	var fade_gradient := Gradient.new()
+	fade_gradient.set_color(0, death_flash_color)
+	var faded_color := death_flash_color
+	faded_color.a = 0.0
+	fade_gradient.set_color(1, faded_color)
+	death_particles.color_ramp = fade_gradient
+	death_particles.emitting = false
+	add_child(death_particles)
+
+
 func _update_animation(direction: float) -> void:
+	if is_dead:
+		return
 	if is_on_floor():
 		if has_been_airborne:
 			has_been_airborne = false
@@ -211,6 +400,8 @@ func _update_animation(direction: float) -> void:
 
 
 func _play_state(new_state: PlayerState, animation_name: StringName) -> void:
+	if is_dead:
+		return
 	if current_state == new_state:
 		return
 	current_state = new_state

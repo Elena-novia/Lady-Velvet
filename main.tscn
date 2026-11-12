@@ -3,17 +3,15 @@
 [ext_resource type="Script" uid="uid://crsh6q6iubho6" path="res://player.gd" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/objects/PiedraEscalable.tscn" id="2_piedra"]
 [ext_resource type="Texture2D" uid="uid://dpuvivqwas83a" path="res://assets/backgrund.png" id="3_background"]
-[ext_resource type="Texture2D" uid="uid://daq7vboxorbhq" path="res://assets/floor_2.png" id="4_floor"]
 [ext_resource type="PackedScene" path="res://scenes/objects/Portal.tscn" id="5_portal"]
 [ext_resource type="PackedScene" path="res://scenes/ui/EndScreen.tscn" id="6_end_screen"]
 [ext_resource type="Texture2D" uid="uid://b03hhngut4ixx" path="res://assets/antes_del_fondo.png" id="7_antes_del_fondo"]
 [ext_resource type="PackedScene" path="res://scenes/objects/FloatingPlatform.tscn" id="8_floating_platform"]
+[ext_resource type="PackedScene" path="res://scenes/objects/BlackFloor.tscn" id="9_black_floor"]
+[ext_resource type="PackedScene" path="res://scenes/objects/DeathZone.tscn" id="10_death_zone"]
 
 [sub_resource type="RectangleShape2D" id="PlayerShape"]
 size = Vector2(56, 128)
-
-[sub_resource type="RectangleShape2D" id="GroundShape"]
-size = Vector2(20000, 64)
 
 [node name="Main" type="Node2D" unique_id=1389211590]
 
@@ -22,6 +20,7 @@ z_index = -100
 scroll_scale = Vector2(0.15, 0.25)
 
 [node name="BackgroundImage" type="Sprite2D" parent="Background" unique_id=1122087820]
+position = Vector2(2955, -76)
 scale = Vector2(4, 4)
 texture = ExtResource("3_background")
 
@@ -38,18 +37,18 @@ texture = ExtResource("7_antes_del_fondo")
 position = Vector2(0, 217.5)
 
 [node name="ExitPortal" parent="." unique_id=1753301052 instance=ExtResource("5_portal")]
-position = Vector2(3917, -807)
+position = Vector2(4823, -784)
 portal_type = 1
 
 [node name="PiedraEscalable" parent="." unique_id=1021048729 instance=ExtResource("2_piedra")]
-position = Vector2(876, 383)
+position = Vector2(1508, 361)
 scale = Vector2(0.35, 0.35)
 interaction_margin = 123.0
 top_non_climbable_margin = 180.0
 bottom_non_climbable_margin = 180.0
 
 [node name="PiedraEscalable2" parent="." unique_id=439993819 instance=ExtResource("2_piedra")]
-position = Vector2(2018, 393)
+position = Vector2(2639, 364)
 scale = Vector2(0.47, 0.47)
 top_non_climbable_margin = 180.0
 bottom_non_climbable_margin = 180.0
@@ -57,7 +56,7 @@ climb_speed = 194.0
 top_clearance = 133.0
 
 [node name="FloatingPlatform" parent="." unique_id=1212416296 instance=ExtResource("8_floating_platform")]
-position = Vector2(2462, -247.99997)
+position = Vector2(3294, -171)
 scale = Vector2(0.35, 0.35)
 
 [node name="Player" type="CharacterBody2D" parent="." unique_id=1659112505 groups=["player"]]
@@ -88,29 +87,51 @@ theme_override_constants/outline_size = 4
 text = "E - Climb"
 horizontal_alignment = 1
 
-[node name="Ground" type="StaticBody2D" parent="." unique_id=1537097448]
-position = Vector2(0, 352)
+[node name="BlackFloorStart" parent="." unique_id=1081104099 instance=ExtResource("9_black_floor")]
+position = Vector2(-255, 620)
+scale = Vector2(1, 10)
+dimensions = Vector2(1600, 64)
 
-[node name="Visual" type="Sprite2D" parent="Ground" unique_id=920721714]
-texture_repeat = 1
-position = Vector2(-10000, -32)
-scale = Vector2(0.5, 0.5)
-texture = ExtResource("4_floor")
-centered = false
-region_enabled = true
-region_rect = Rect2(0, 0, 40000, 3200)
+[node name="BlackFloorSegment2" parent="." unique_id=1381308339 instance=ExtResource("9_black_floor")]
+position = Vector2(1335, 671)
+scale = Vector2(1, 10)
+dimensions = Vector2(630, 64)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground" unique_id=1106467170]
-shape = SubResource("GroundShape")
+[node name="BlackFloorSegment3" parent="." unique_id=1772088454 instance=ExtResource("9_black_floor")]
+position = Vector2(2792, 669.00006)
+scale = Vector2(1, 10)
+dimensions = Vector2(650, 64)
+
+[node name="DeathZoneGap1" parent="." unique_id=1536495447 instance=ExtResource("10_death_zone")]
+position = Vector2(732, 839.00006)
+scale = Vector2(3, 3)
+dimensions = Vector2(280, 180)
+
+[node name="DeathZoneGap4" parent="." unique_id=64836424 instance=ExtResource("10_death_zone")]
+position = Vector2(3878, 907)
+scale = Vector2(5, 5)
+dimensions = Vector2(310, 180)
 
 [node name="EndScreen" parent="." unique_id=2012009436 instance=ExtResource("6_end_screen")]
 
 [node name="PiedraEscalable4" parent="." unique_id=1889857875 instance=ExtResource("2_piedra")]
-position = Vector2(3804.9998, -69)
+position = Vector2(4667, -32)
 scale = Vector2(0.57, 0.57)
 
 [node name="FloatingPlatform2" parent="." unique_id=527230746 instance=ExtResource("8_floating_platform")]
-position = Vector2(3098, -397.99997)
+position = Vector2(4101, -405)
 scale = Vector2(0.35, 0.35)
 horizontal_travel_distance = 338.0
 auto_direction_from_position = true
+
+[node name="FloatingPlatform3" parent="." unique_id=868484048 instance=ExtResource("8_floating_platform")]
+position = Vector2(1940.0001, 68.00001)
+scale = Vector2(0.34, 0.34)
+
+[node name="DeathZone" parent="." unique_id=596790253 instance=ExtResource("10_death_zone")]
+position = Vector2(2031, 834.00006)
+scale = Vector2(3, 3)
+
+[node name="BlackFloor" parent="." unique_id=1467110145 instance=ExtResource("9_black_floor")]
+position = Vector2(4857, 508)
+scale = Vector2(1, 17)

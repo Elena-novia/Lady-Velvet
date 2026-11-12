@@ -14,6 +14,7 @@ var has_triggered: bool = false
 func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 	if portal_type == PortalType.START:
+		add_to_group("start_portal")
 		monitoring = false
 		call_deferred("_begin_player_intro")
 	else:
@@ -26,6 +27,21 @@ func _begin_player_intro() -> void:
 	if player == null or spawn_point == null or not player.has_method("begin_start_sequence"):
 		return
 	player.begin_start_sequence(
+		spawn_point.to_global(spawn_position_offset),
+		intro_direction,
+		intro_step_distance,
+		intro_step_count
+	)
+
+
+func respawn_player(player: Node) -> void:
+	if portal_type != PortalType.START or not is_instance_valid(player):
+		return
+	var spawn_point := get_node_or_null("SpawnPoint") as Marker2D
+	if spawn_point == null or not player.has_method("respawn_from_start_portal"):
+		return
+	player.call(
+		"respawn_from_start_portal",
 		spawn_point.to_global(spawn_position_offset),
 		intro_direction,
 		intro_step_distance,
