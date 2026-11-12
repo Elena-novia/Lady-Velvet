@@ -1,0 +1,67 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://scripts/objects/floating_platform.gd" id="1_movement"]
+[ext_resource type="Texture2D" path="res://assets/murcielago_8frames_godot.png" id="2_sheet"]
+
+[sub_resource type="AtlasTexture" id="Frame0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 0, 444, 444)
+
+[sub_resource type="AtlasTexture" id="Frame1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(444, 0, 444, 444)
+
+[sub_resource type="AtlasTexture" id="Frame2"]
+atlas = ExtResource("2_sheet")
+region = Rect2(888, 0, 444, 444)
+
+[sub_resource type="AtlasTexture" id="Frame3"]
+atlas = ExtResource("2_sheet")
+region = Rect2(1332, 0, 444, 444)
+
+[sub_resource type="AtlasTexture" id="Frame4"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 444, 444, 444)
+
+[sub_resource type="AtlasTexture" id="Frame5"]
+atlas = ExtResource("2_sheet")
+region = Rect2(444, 444, 444, 444)
+
+[sub_resource type="AtlasTexture" id="Frame6"]
+atlas = ExtResource("2_sheet")
+region = Rect2(888, 444, 444, 444)
+
+[sub_resource type="AtlasTexture" id="Frame7"]
+atlas = ExtResource("2_sheet")
+region = Rect2(1332, 444, 444, 444)
+
+[sub_resource type="SpriteFrames" id="BatSpriteFrames"]
+resource_local_to_scene = true
+animations = [{
+"frames": [{"duration": 1.0, "texture": SubResource("Frame0")}, {"duration": 1.0, "texture": SubResource("Frame1")}, {"duration": 1.0, "texture": SubResource("Frame2")}, {"duration": 1.0, "texture": SubResource("Frame3")}, {"duration": 1.0, "texture": SubResource("Frame4")}, {"duration": 1.0, "texture": SubResource("Frame5")}, {"duration": 1.0, "texture": SubResource("Frame6")}, {"duration": 1.0, "texture": SubResource("Frame7")}],
+"loop": true,
+"name": &"fly",
+"speed": 8.0
+}]
+
+[sub_resource type="RectangleShape2D" id="BackpackPlatformShape"]
+resource_local_to_scene = true
+size = Vector2(190, 8)
+
+[node name="BatPlatform" type="AnimatableBody2D"]
+sync_to_physics = true
+collision_layer = 1
+collision_mask = 1
+script = ExtResource("1_movement")
+
+[node name="Visual" type="AnimatedSprite2D" parent="."]
+scale = Vector2(1.35, 1.35)
+sprite_frames = SubResource("BatSpriteFrames")
+animation = &"fly"
+autoplay = "fly"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -140.45)
+shape = SubResource("BackpackPlatformShape")
+one_way_collision = true
+one_way_collision_margin = 8.0

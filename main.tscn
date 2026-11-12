@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/objects/Portal.tscn" id="5_portal"]
 [ext_resource type="PackedScene" path="res://scenes/ui/EndScreen.tscn" id="6_end_screen"]
 [ext_resource type="Texture2D" uid="uid://b03hhngut4ixx" path="res://assets/antes_del_fondo.png" id="7_antes_del_fondo"]
-[ext_resource type="PackedScene" path="res://scenes/objects/FloatingPlatform.tscn" id="8_floating_platform"]
+[ext_resource type="PackedScene" path="res://scenes/objects/BatPlatform.tscn" id="8_floating_platform"]
 [ext_resource type="PackedScene" path="res://scenes/objects/BlackFloor.tscn" id="9_black_floor"]
 [ext_resource type="PackedScene" path="res://scenes/objects/DeathZone.tscn" id="10_death_zone"]
 
@@ -55,7 +55,7 @@ bottom_non_climbable_margin = 180.0
 climb_speed = 194.0
 top_clearance = 133.0
 
-[node name="FloatingPlatform" parent="." unique_id=1212416296 instance=ExtResource("8_floating_platform")]
+[node name="BatPlatform" parent="." unique_id=1212416296 instance=ExtResource("8_floating_platform")]
 position = Vector2(3294, -171)
 scale = Vector2(0.35, 0.35)
 
@@ -118,13 +118,13 @@ dimensions = Vector2(310, 180)
 position = Vector2(4667, -32)
 scale = Vector2(0.57, 0.57)
 
-[node name="FloatingPlatform2" parent="." unique_id=527230746 instance=ExtResource("8_floating_platform")]
+[node name="BatPlatform2" parent="." unique_id=527230746 instance=ExtResource("8_floating_platform")]
 position = Vector2(4101, -405)
 scale = Vector2(0.35, 0.35)
 horizontal_travel_distance = 338.0
 auto_direction_from_position = true
 
-[node name="FloatingPlatform3" parent="." unique_id=868484048 instance=ExtResource("8_floating_platform")]
+[node name="BatPlatform3" parent="." unique_id=868484048 instance=ExtResource("8_floating_platform")]
 position = Vector2(1940.0001, 68.00001)
 scale = Vector2(0.34, 0.34)
 
