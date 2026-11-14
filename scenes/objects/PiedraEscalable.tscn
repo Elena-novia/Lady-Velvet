@@ -19,12 +19,14 @@ polygon = PackedVector2Array(-376.5, -1122, 376.5, -1122, 376.5, -47, 376.5, -5,
 position = Vector2(-352.5, -561)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="InteractionAreaLeft" unique_id=513013565]
+scale = Vector2(1, 1.165)
 polygon = PackedVector2Array(-15.833954, -495, -143.83395, -495, -136.32608, 495, -8.32608, 495)
 
 [node name="InteractionAreaRight" type="Area2D" parent="." unique_id=1755542842 groups=["climbable_areas"]]
 position = Vector2(352.5, -561)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="InteractionAreaRight" unique_id=285822446]
+scale = Vector2(1, 1.16)
 polygon = PackedVector2Array(16, -495, 144, -495, 144, 495, 16, 495)
 
 [node name="TopAnchor" type="Marker2D" parent="." unique_id=737165127]

@@ -3,6 +3,7 @@ extends Area2D
 enum PortalType { START, EXIT }
 
 @export var portal_type: PortalType = PortalType.START
+@export var portal_texture: Texture2D
 @export var spawn_position_offset: Vector2 = Vector2.ZERO
 @export var intro_direction: Vector2 = Vector2.RIGHT
 @export_range(0.0, 300.0, 1.0) var intro_step_distance: float = 106.0
@@ -12,6 +13,9 @@ var has_triggered: bool = false
 
 
 func _ready() -> void:
+	var visual := get_node_or_null("Sprite2D") as Sprite2D
+	if visual != null and portal_texture != null:
+		visual.texture = portal_texture
 	body_entered.connect(_on_body_entered)
 	if portal_type == PortalType.START:
 		add_to_group("start_portal")

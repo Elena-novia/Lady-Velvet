@@ -50,6 +50,8 @@ var _scene_reload_started: bool = false
 @onready var character_sprite: AnimatedSprite2D = $Visual
 @onready var climb_prompt: Label = $ClimbPrompt
 @onready var player_collision: CollisionShape2D = $CollisionShape2D
+@onready var footstep_audio: AudioStreamPlayer = $FootstepSFX
+@onready var climb_audio: AudioStreamPlayer = $ClimbSFX
 
 const ANIMATIONS := {
 	"idle": {"frames": 4, "fps": 8.0, "loop": true},
@@ -78,6 +80,13 @@ func _ready() -> void:
 
 	character_sprite.sprite_frames = sprite_frames
 	character_sprite.play("idle")
+	character_sprite.frame_changed.connect(_on_character_frame_changed)
+	var audio_listener := get_node_or_null("AudioListener2D") as AudioListener2D
+	if audio_listener != null:
+		audio_listener.make_current()
+	var climb_track := climb_audio.stream as AudioStreamMP3
+	if climb_track != null:
+		climb_track.loop = true
 	_default_visual_scale = character_sprite.scale
 	_default_visual_modulate = character_sprite.modulate
 	climb_prompt.visible = false
@@ -144,6 +153,7 @@ func begin_start_sequence(
 ) -> void:
 	if start_sequence_consumed:
 		return
+	_stop_movement_audio()
 	start_sequence_consumed = true
 	global_position = spawn_position
 	controls_enabled = false
@@ -195,6 +205,7 @@ func _finish_start_sequence() -> void:
 
 
 func lock_controls() -> void:
+	_stop_movement_audio()
 	controls_enabled = false
 	start_sequence_active = false
 	start_sequence_remaining = 0.0
@@ -211,6 +222,7 @@ func lock_controls() -> void:
 func die() -> bool:
 	if is_dead or _scene_reload_started:
 		return false
+	_stop_movement_audio()
 	_death_cycle_id += 1
 	var this_death_cycle := _death_cycle_id
 	var death_started_usec := Time.get_ticks_usec()
@@ -310,7 +322,17 @@ func _create_death_particles() -> void:
 
 func _update_animation(direction: float) -> void:
 	if is_dead:
+		_stop_footstep_audio()
 		return
+	if (
+		is_climbing
+		or start_sequence_active
+		or not controls_enabled
+		or current_state != PlayerState.WALK
+		or not is_on_floor()
+		or is_zero_approx(direction)
+	):
+		_stop_footstep_audio()
 	if is_on_floor():
 		if has_been_airborne:
 			has_been_airborne = false
@@ -410,6 +432,7 @@ func _process_climbing(delta: float) -> void:
 	velocity = (global_position - starting_position) / maxf(delta, 0.0001)
 	local_position = active_climbable.to_local(global_position)
 	if local_position.y <= top_limit + 0.5:
+		_set_climb_audio_active(false)
 		local_position = Vector2(active_climb_anchor.position.x, top_limit)
 		global_position = active_climbable.to_global(local_position)
 		if _try_step_onto_climbable_top():
@@ -421,9 +444,12 @@ func _process_climbing(delta: float) -> void:
 		local_position = Vector2(active_climb_anchor.position.x, bottom_limit)
 		global_position = active_climbable.to_global(local_position)
 		_end_climbing()
+	else:
+		_set_climb_audio_active(not is_zero_approx(vertical_direction) and velocity.length() > 0.5)
 
 
 func _begin_climbing(area: Area2D) -> void:
+	_stop_footstep_audio()
 	active_climbable = area.get_parent() as Node2D
 	if active_climbable == null:
 		return
@@ -451,6 +477,8 @@ func _begin_climbing(area: Area2D) -> void:
 
 
 func _jump_from_climb() -> void:
+	_set_climb_audio_active(false)
+	_stop_footstep_audio()
 	var jump_direction := Vector2(
 		Input.get_axis("move_left", "move_right"),
 		Input.get_axis("climb_up", "climb_down")
@@ -489,6 +517,7 @@ func _jump_from_climb() -> void:
 
 
 func _end_climbing() -> void:
+	_set_climb_audio_active(false)
 	is_climbing = false
 	active_climbable = null
 	active_climb_anchor = null
@@ -558,6 +587,7 @@ func _try_step_onto_climbable_top() -> bool:
 	if horizontal_direction * inward_direction.x <= 0.0:
 		return false
 
+	_set_climb_audio_active(false)
 	is_climbing = false
 	active_climbable = null
 	active_climb_anchor = null
@@ -585,3 +615,38 @@ func _on_climb_area_body_exited(body: Node2D, area: Area2D) -> void:
 		if not is_climbing:
 			can_climb = _get_nearest_reachable_climb_area() != null
 			_update_climb_prompt()
+
+
+func _on_character_frame_changed() -> void:
+	if (
+		character_sprite.animation != "walk"
+		or current_state != PlayerState.WALK
+		or character_sprite.frame not in [1, 5]
+		or is_dead
+		or is_climbing
+		or start_sequence_active
+		or not controls_enabled
+		or not is_on_floor()
+		or absf(velocity.x) < 1.0
+	):
+		return
+	footstep_audio.play()
+
+
+func _stop_footstep_audio() -> void:
+	if footstep_audio != null and footstep_audio.playing:
+		footstep_audio.stop()
+
+
+func _set_climb_audio_active(active: bool) -> void:
+	if climb_audio == null:
+		return
+	if active and not climb_audio.playing:
+		climb_audio.play()
+	elif not active and climb_audio.playing:
+		climb_audio.stop()
+
+
+func _stop_movement_audio() -> void:
+	_stop_footstep_audio()
+	_set_climb_audio_active(false)

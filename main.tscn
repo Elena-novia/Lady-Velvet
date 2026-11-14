@@ -6,10 +6,14 @@
 [ext_resource type="PackedScene" path="res://scenes/objects/Portal.tscn" id="5_portal"]
 [ext_resource type="PackedScene" path="res://scenes/ui/EndScreen.tscn" id="6_end_screen"]
 [ext_resource type="Texture2D" uid="uid://dfahusmy41fs" path="res://assets/cristales.png" id="7_antes_del_fondo"]
-[ext_resource type="PackedScene" path="res://scenes/objects/BatPlatform.tscn" id="8_floating_platform"]
+[ext_resource type="PackedScene" uid="uid://crgpieudemooj" path="res://scenes/objects/BatPlatform.tscn" id="8_floating_platform"]
 [ext_resource type="PackedScene" uid="uid://cwjp00glr6tn5" path="res://scenes/objects/BlackFloor.tscn" id="9_black_floor"]
 [ext_resource type="PackedScene" path="res://scenes/objects/DeathZone.tscn" id="10_death_zone"]
 [ext_resource type="Texture2D" uid="uid://kqxkc05q38ga" path="res://assets/delante.png" id="11_delante"]
+[ext_resource type="Texture2D" uid="uid://ybu5cbndamnl" path="res://assets/entrada.png" id="12_entrada"]
+[ext_resource type="Texture2D" uid="uid://bfv203v783hg6" path="res://assets/salida.png" id="13_salida"]
+[ext_resource type="AudioStream" uid="uid://cqxbbjh66mxof" path="res://Music/Pasos.mp3" id="14_footsteps"]
+[ext_resource type="AudioStream" uid="uid://dh1f4p1tt12tv" path="res://Music/Escalar.mp3" id="15_climb"]
 
 [sub_resource type="RectangleShape2D" id="PlayerShape"]
 size = Vector2(56, 128)
@@ -70,16 +74,18 @@ scale = Vector2(1.1460707, 1.1460706)
 texture = ExtResource("11_delante")
 
 [node name="DelanteImage3" type="Sprite2D" parent="Delante" unique_id=209154724]
-position = Vector2(6526.9995, 74.99997)
+position = Vector2(6502.9995, 479.00006)
 scale = Vector2(1.431, 1.431)
 texture = ExtResource("11_delante")
 
 [node name="StartPortal" parent="." unique_id=1753301051 instance=ExtResource("5_portal")]
 position = Vector2(1, 206)
+portal_texture = ExtResource("12_entrada")
 
 [node name="ExitPortal" parent="." unique_id=1753301052 instance=ExtResource("5_portal")]
 position = Vector2(6689, -1170)
 portal_type = 1
+portal_texture = ExtResource("13_salida")
 
 [node name="PiedraEscalable" parent="." unique_id=1021048729 instance=ExtResource("2_piedra")]
 position = Vector2(1508, 361)
@@ -127,6 +133,16 @@ theme_override_colors/font_outline_color = Color(0.08, 0.1, 0.12, 1)
 theme_override_constants/outline_size = 4
 text = "E - Climb"
 horizontal_alignment = 1
+
+[node name="AudioListener2D" type="AudioListener2D" parent="Player" unique_id=1681290646]
+
+[node name="FootstepSFX" type="AudioStreamPlayer" parent="Player" unique_id=6672271]
+stream = ExtResource("14_footsteps")
+volume_db = -4.0
+
+[node name="ClimbSFX" type="AudioStreamPlayer" parent="Player" unique_id=915282181]
+stream = ExtResource("15_climb")
+volume_db = -10.0
 
 [node name="BlackFloorStart" parent="." unique_id=1081104099 instance=ExtResource("9_black_floor")]
 position = Vector2(-255, 620)
@@ -185,10 +201,6 @@ scale = Vector2(0.895, 18.105)
 position = Vector2(5096, -980)
 scale = Vector2(0.34, 0.34)
 
-[node name="BlackFloor3" parent="." unique_id=107140626 instance=ExtResource("9_black_floor")]
-position = Vector2(3397, -645)
-scale = Vector2(0.21, 0.44)
-
 [node name="PiedraEscalable3" parent="." unique_id=221245507 instance=ExtResource("2_piedra")]
 position = Vector2(4586, -176)
 scale = Vector2(0.62, 0.62)
@@ -202,5 +214,5 @@ position = Vector2(5859.9995, -806)
 scale = Vector2(0.34, 0.34)
 
 [node name="DeathZone2" parent="." unique_id=13846599 instance=ExtResource("10_death_zone")]
-position = Vector2(5664, 118)
+position = Vector2(5721.9995, 431.00003)
 scale = Vector2(5.36, 1.12)
